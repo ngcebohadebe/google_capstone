@@ -1,0 +1,49 @@
+## Prepare
+##  install packages
+library(tidyverse)
+library(janitor)
+library(lubridate)
+
+library(data.table)
+
+## Importing Tables
+Jan <- read_csv("Case Study/data/Jan.csv")
+Feb <- read_csv("Case Study/data/Feb.csv")
+Mar <- read_csv("Case Study/data/Mar.csv")
+Apr <- read_csv("Case Study/data/Apr.csv")
+May <- read_csv("Case Study/data/May.csv")
+June <- read_csv("Case Study/data/June.csv")
+July <- read_csv("Case Study/data/July.csv")
+Aug <- read_csv("Case Study/data/Aug.csv")
+Sept <- read_csv("Case Study/data/Sept.csv")
+Oct <- read_csv("Case Study/data/Oct.csv")
+Nov <- read_csv("Case Study/data/Nov.csv")
+Dec <- read_csv("Case Study/data/Dec.csv")
+ 
+## Join Tables
+year <-rbind(Jan,Feb,Mar,Apr,May,June,July,Aug,Sept,Oct,Nov,Dec)
+glimpse(year)
+
+## Checking for duplicates
+duplicated(year$ride_id)
+which(duplicated(year$ride_id))
+
+## deleting duplicates
+year_no_dups <-year[!duplicated(year$ride_id),] 
+
+##adding coloumns
+##breaking down started time
+year_no_dups$start_date<- as.Date(year_no_dups$started_at)
+year_no_dups$month<- format(year_no_dups$started_at,"%b")
+year_no_dups$day<- weekdays(year_no_dups$started_at)
+year_no_dups$hour<- hour(year_no_dups$started_at)
+
+glimpse(year_no_dups)
+
+##duration time rented in min
+rented <- year_no_dups$ended_at - year_no_dups$started_at
+year_no_dups$rented<- rented
+##for calculation purposes
+fwrite(year_no_dups,"C:/Users/Ngcebo T Hadebe/Documents/Case Study/year.csv", sep=",", row.name= FALSE)
+## Proccesing Data
+
