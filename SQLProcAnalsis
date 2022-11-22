@@ -18,6 +18,20 @@ FROM
 where 
 	rented<0 
 
+-------
+
+SELECT 
+-- checking for nulls
+	start_station_name, start_station_id, start_lat, start_lng,end_station_name, end_station_id, end_lat, end_lng
+FROM
+year
+where 
+	ifnull(length(end_station_name), 0) = 0 or ifnull(length(end_station_id), 0) = 0 or ifnull(length(end_lat), 0) = 0 or ifnull(length(end_lng), 0) = 0  or
+	ifnull(length(start_station_name), 0) = 0 or ifnull(length(start_station_id), 0) = 0 or ifnull(length(start_lat), 0) = 0 or ifnull(length(start_lng), 0) = 0  
+
+-- Result: 1345218 rows returned, this is almost one fifth
+-- we should go back to the stackholder to give direction on the best course of action
+
 ------
 MONTH
 ------
