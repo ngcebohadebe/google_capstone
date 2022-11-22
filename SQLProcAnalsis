@@ -87,6 +87,8 @@ FROM
 	cas_month JOIN mem_month on cas_month.month = mem_month.month
 
 ------
+DAY
+------
 
 -- create tot_day  
 SELECT 
