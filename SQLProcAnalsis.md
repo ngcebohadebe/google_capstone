@@ -1,8 +1,12 @@
 # growth
-
+----
+SQLITE QUEARYS
+----
 -- checking inconsistancies between start_date and ended_at
-SELECT rented, month
-FROM year
+SELECT 
+  rented, month
+FROM 
+  year
 WHERE rented<0
 
 -----
