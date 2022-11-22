@@ -10,6 +10,7 @@ FROM
 WHERE rented<0
 
 -----
+
 -- rented is less 0
 DELETE
 FROM
@@ -18,7 +19,8 @@ where
 	rented<0 
 
 ------
-
+MONTH
+------
 --creating table mem_month and mem_rented in min
 SELECT
 	month,round(sum(rented)/60) as mem_rented, sum(member_casual= "member") as mem_user
@@ -120,6 +122,8 @@ FROM
 	cas_mem_day JOIN tot_day on cas_mem_day.day = tot_day.day
 
 --------
+STATION
+---------
 
 -- create_tot_station 
 SELECT 
@@ -167,3 +171,53 @@ SELECT
 	tot_cas_station.start_station_name , cas_users, mem_users, tot_users, cas_rent, mem_rent, tot_rent, avg_cas_rent, avg_mem_rent, avg_tot_rent 
 FROM tot_cas_station LEFT JOIN mem_station on tot_cas_station.start_station_name = mem_station.start_station_name
 
+----------
+RIDETYPE
+----------
+
+--create table tot_ridetype
+SELECT
+	rideable_type, max(rented) as tot_max,sum(member_casual="member_casual") as tot_users
+FROM
+	year
+GROUP by rideable_type
+
+------
+
+--create table cas_ridetype
+SELECT
+	rideable_type,max(rented) as cas_max,sum(member_casual="casual") as cas_users
+FROM
+	year
+WHERE
+	member_casual = "casual"
+GROUP by rideable_type
+
+------
+
+--create table cas_ridetype
+SELECT
+	rideable_type,max(rented) as mem_max,sum(member_casual="member") as mem_users
+FROM
+	year
+WHERE
+	member_casual = "member"
+GROUP by rideable_type
+
+--------
+
+--joining cas_ridetype to mem_ridetype to create cas_mem_ridetype
+SELECT 
+	cas_ridetype.rideable_type, cas_users, mem_users, cas_max, mem_max
+FROM
+	cas_ridetype LEFT JOIN mem_ridetype on cas_ridetype.rideable_type = mem_ridetype.rideable_type 
+
+--------
+
+--joining cas_ridetype to cas_mem_ridetype to create ridetype
+SELECT 
+	cas_mem_ridetype.rideable_type, cas_users, mem_users, tot_users, cas_max, mem_max, tot_max
+FROM
+	cas_mem_ridetype LEFT JOIN tot_ridetype on cas_mem_ridetype.rideable_type = tot_ridetype.rideable_type 
+
+------
