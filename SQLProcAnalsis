@@ -229,6 +229,8 @@ FROM
 	cas_ridetype LEFT JOIN mem_ridetype on cas_ridetype.rideable_type = mem_ridetype.rideable_type 
 
 --------
+HOUR
+--------
 
 --joining cas_ridetype to cas_mem_ridetype to create ridetype
 SELECT 
@@ -237,3 +239,49 @@ FROM
 	cas_mem_ridetype LEFT JOIN tot_ridetype on cas_mem_ridetype.rideable_type = tot_ridetype.rideable_type 
 
 ------
+
+-- create_tot_hour
+SELECT
+hour, round(sum(rented)/60) as tot_rented, round(avg(rented)/60) as avg_tot_rented
+FROM
+year
+
+GROUP by
+hour
+
+-------
+
+-- create_cas_hour
+SELECT
+	hour, round(sum(rented)/60) as cas_rented, round(avg(rented)/60) as cas_avg_rented
+FROM
+	year
+WHERE
+	member_casual = "casual"
+GROUP by hour
+
+--------
+
+-- create_mem_hour
+SELECT
+hour, round(sum(rented)/60) as mem_rented, round(avg(rented)/60) as mem_avg_rented
+FROM
+year
+WHERE
+member_casual = "member"
+GROUP by
+hour
+
+-------
+
+-- joining create_mem_hour to tot_hour to create tot_mem_hour and rented in min
+SELECT tot_hour.hour, tot_rented, mem_rented, avg_tot_rented, mem_avg_rented
+FROM
+tot_hour JOIN create_mem_hour on tot_hour.hour= create_mem_hour.hour
+
+--------
+
+-- joining tot_mem_hour to cas_hour to create hour rented in min
+SELECT tot_mem_hour.hour, tot_rented, mem_rented,cas_rented, avg_tot_rented, mem_avg_rented,cas_avg_rented
+FROM
+tot_mem_hour JOIN cas_hour on tot_mem_hour.hour= cas_hour.hour
