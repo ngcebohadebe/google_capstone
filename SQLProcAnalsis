@@ -4,66 +4,71 @@ SQLITE QUEARYS
 ----
 -- checking inconsistancies between start_date and ended_at
 SELECT 
-  rented, month
+  	rented, month
 FROM 
-  year
+  	year
 WHERE rented<0
 
 -----
 -- rented is less 0
 DELETE
 FROM
-year
-where rented<0 
+	year
+where 
+	rented<0 
 
 ------
 
 --creating table mem_month and mem_rented in min
 SELECT
-month,round(sum(rented)/60) as mem_rented, sum(member_casual= "member") as mem_user
+	month,round(sum(rented)/60) as mem_rented, sum(member_casual= "member") as mem_user
 FROM
 year
-WHERE member_casual = "member"
+WHERE 
+	member_casual = "member"
 group by month
 
 --creating table tot_month
 -- tot_rented in min
 SELECT
-month,round(sum(rented)/60) as tot_rented, sum(member_casual= "member_casual") as tot_user
+	month,round(sum(rented)/60) as tot_rented, sum(member_casual= "member_casual") as tot_user
 FROM
-year
+	year
 group by month
 
 -----
 --creating table cas_month and cas_rented in min
 SELECT
-month,round(sum(rented)/60) as cas_rented, sum(member_casual= "casual") as cas_user
+	month,round(sum(rented)/60) as cas_rented, sum(member_casual= "casual") as cas_user
 FROM
-year
-WHERE member_casual = "casual"
+	year
+WHERE 
+	member_casual = "casual"
 group by month
 
 ---------
 
 -- joining cas_month to mem_month to cas_mem_month
-SELECT cas_month.month, cas_rented, mem_rented, cas_user, mem_user
+SELECT 
+	cas_month.month, cas_rented, mem_rented, cas_user, mem_user
 FROM
-cas_month JOIN mem_month on cas_month.month = mem_month.month
+	cas_month JOIN mem_month on cas_month.month = mem_month.month
 
 -----
 
--- joining cas_month to mem_month to month
--- rented in min
-SELECT cas_mem_month.month, cas_rented, mem_rented, tot_rented, cas_user, mem_user,tot_user
+-- joining cas_month to mem_month to month and rented in min
+SELECT 
+	cas_mem_month.month, cas_rented, mem_rented, tot_rented, cas_user, mem_user,tot_user
 FROM
-cas_mem_month JOIN tot_month on cas_mem_month.month = tot_month.month
+	cas_mem_month JOIN tot_month on cas_mem_month.month = tot_month.month
 
 -------
 
 -- joining cas_month to mem_month to cas_mem_month
-SELECT cas_month.month, cas_rented, mem_rented, cas_user, mem_user
+SELECT 
+	cas_month.month, cas_rented, mem_rented, cas_user, mem_user
 FROM
-cas_month JOIN mem_month on cas_month.month = mem_month.month
+	cas_month JOIN mem_month on cas_month.month = mem_month.month
 
 ------
 
@@ -71,7 +76,7 @@ cas_month JOIN mem_month on cas_month.month = mem_month.month
 SELECT 
 	day, sum(member_casual="member_casual") as tot_user, round(sum(rented)/60) as tot_rented,  avg(rented)/60 as tot_cas_rented
 FROM
-year
+	year
 GROUP by  day
 
 -----
@@ -80,9 +85,9 @@ GROUP by  day
 SELECT 
 	day, sum(member_casual="casual") as cas_user, round(sum(rented)/60) as cas_rented,  avg(rented)/60 as avg_cas_rented
 FROM
-year
+	year
 WHERE
-member_casual = "casual"
+	member_casual = "casual"
 GROUP by  day
 
 ------
@@ -91,17 +96,18 @@ GROUP by  day
 SELECT 
 	day, sum(member_casual="member") as mem_user, round(sum(rented)/60) as mem_rented,  avg(rented)/60 as avg_mem_rented
 FROM
-year
+	year
 WHERE
-member_casual = "member"
+	member_casual = "member"
 GROUP by  day
 
 ------
 
 -- joining create_mem_hour to tot_hour to create tot_mem_hour and rented in min
-SELECT cas_day.day, cas_user, mem_user, cas_rented, mem_rented, avg_cas_rented, avg_mem_rented
+SELECT 
+	cas_day.day, cas_user, mem_user, cas_rented, mem_rented, avg_cas_rented, avg_mem_rented
 FROM
-cas_day JOIN mem_day on cas_day.day = mem_day.day
+	cas_day JOIN mem_day on cas_day.day = mem_day.day
 
 --------
 
@@ -111,6 +117,53 @@ SELECT
 	avg_cas_rented, avg_mem_rented, tot_cas_rented as avg_tot_rented,
 	cas_user*100/tot_user as cas_perc, mem_user*100/tot_user as mem_perc
 FROM
-cas_mem_day JOIN tot_day on cas_mem_day.day = tot_day.day
+	cas_mem_day JOIN tot_day on cas_mem_day.day = tot_day.day
 
+--------
+
+-- create_tot_station 
+SELECT 
+	start_station_name, sum(member_casual="member_casual") as tot_users, sum(rented)/60 as tot_rent,
+	round(avg(rented)/60) as avg_tot_rent
+FROM
+	year
+GROUP by start_station_name
+
+--------
+
+-- mem_station 
+SELECT 
+	start_station_name, sum(member_casual="member") as mem_users, sum(rented)/60 as mem_rent,
+	round(avg(rented)/60) as avg_mem_rent
+FROM
+	year
+WHERE
+	member_casual = "member" 
+GROUP by start_station_name
+ 
+ ---------
+ 
+ -- cas_station 
+SELECT 
+	start_station_name, sum(member_casual="casual") as cas_users, sum(rented)/60 as cas_rent,
+	round(avg(rented)/60) as avg_cas_rent
+FROM
+	year
+WHERE
+	member_casual = "casual" 
+GROUP by start_station_name
+
+--------
+
+-- join create_tot_cas_station
+SELECT
+	tot_station.start_station_name , cas_users, tot_users, cas_rent, tot_rent, avg_cas_rent, avg_tot_rent 
+FROM tot_station LEFT JOIN cas_station on tot_station.start_station_name = cas_station.start_station_name
+
+-------
+
+-- join tot_cas_station and mem_station to create_station
+SELECT
+	tot_cas_station.start_station_name , cas_users, mem_users, tot_users, cas_rent, mem_rent, tot_rent, avg_cas_rent, avg_mem_rent, avg_tot_rent 
+FROM tot_cas_station LEFT JOIN mem_station on tot_cas_station.start_station_name = mem_station.start_station_name
 
