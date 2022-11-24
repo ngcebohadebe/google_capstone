@@ -25,3 +25,6 @@ Why would casual riders buy Cyclistic annual memberships?
 How can Cyclistic use digital media to influence casual riders to become members?
 
 This report will focus on the following question “ How do annual members and casual riders use Cyclistic bikes differently? “
+
+Presentation
+https://drive.google.com/file/d/18BsGZvKTvwHynFeH3nhu9muy_j5g2vK_/view?usp=sharing
